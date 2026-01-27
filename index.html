@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .mainBox {
+      display: flex;
+      width: 400px;
+      margin: 170px auto;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px 0px 50px 0px;
+      color: darkorange;
+      background-color: #333333;
+      border-radius: 5px;
+      border-bottom: 10px solid darkorange;
+      box-shadow: 0px 0px 10px black;
+    }
+    .reactionBox {
+      display: flex;
+      gap: 60px;
+    }
+    #face {
+      transform: rotate(90deg);
+    }
+    .controls {
+      margin-top: 27px;
+    }
+    .btn {
+      font-size: 30px;
+      margin: 0px 15px;
+      border: none;
+      padding: 5px;
+      transition: all 0.5s ease;
+      border-radius: 5px;
+      background: #222;
+    }
+    .btn:hover {
+      background-color: dimgray;
+      transform: translateY(-10px);
+      cursor: pointer;
+    }
+    #mainText {
+      font-weight: bolder;
+    }
+  </style>
+</head>
+<body>
+<div class="mainBox">
+  <div class="reactionBox">
+    <h1 id="face">:]</h1>
+    <h1 id="hisHand">✌️</h1>
+  </div>
+  <div class="textBox">
+    <p id="mainText">Let's Play Rock Paper Scissor's!</p>
+  </div>
+  <div class="controls">
+    <button id="paperHand" class="btn">✋</button>
+    <button id="scissorHand" class="btn">✌️</button>
+    <button id="rockHand" class="btn">👊</button>
+  </div>
+</div>
+<script>
+ const face = document.getElementById("face");
+ const hisHand = document.getElementById("hisHand");
+ const mainText = document.getElementById("mainText");
+ const paperBtn = document.getElementById("paperHand");
+ const scissorBtn = document.getElementById("scissorHand");
+ const rockBtn = document.getElementById("rockHand");
+ const choices = ['👊', '✋', '✌️'];
+ let gamePlayed = false;
+
+ function getHisChoice() {
+  const randomIndex = Math.floor(Math.random() * 3);
+  console.log(choices[randomIndex]);
+  return choices[randomIndex];
+ }
+
+ function determineWinner(player, him) {
+  if (player === him) return 'draw';
+  if ((player === '👊' && him === '✌️') || (player === '✋' && him === '👊') || (player === '✌️' && him === '✋')) {
+    return 'player';
+  } else {
+    return 'him';
+  }
+ }
+
+function updateUI(result, playerChoice, hisChoice) {
+  hisHand.textContent = hisChoice;
+  paperBtn.style.backgroundColor = '#222';
+  scissorBtn.style.backgroundColor = '#222';
+  rockBtn.style.backgroundColor = '#222';
+
+  if (playerChoice === '✋') {
+    paperBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
+  }
+  if (playerChoice === '✌️') {
+    scissorBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
+  }
+  if (playerChoice === '👊') {
+    rockBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
+  }
+
+  if (result === 'player') {
+    face.textContent = ":o";
+    mainText.textContent = "OH! You Won!";
+  } else if (result === 'him') {
+    face.textContent = ">:]";
+    mainText.textContent = "Loser! Refresh and Try again if you dare!";
+  } else {
+    face.textContent = ":|";
+    mainText.textContent = "Bleh. It's a Draw. Try Again?";
+  }
+}
+
+function playGame(playerChoice) {
+    if (gamePlayed) return;
+    gamePlayed = true;
+    const buttons = [paperBtn, scissorBtn, rockBtn];
+    buttons.forEach(btn => {
+      btn.style.cursor = 'default';
+      btn.onmouseenter = null;
+      btn.onmouseleave = null;
+    });
+
+    const hisChoice = getHisChoice();
+    const result = determineWinner(playerChoice, hisChoice);
+    setTimeout(() => {
+      updateUI(result, playerChoice, hisChoice);
+    }, 300);
+  }
+
+rockBtn.addEventListener('click', () => playGame('👊'));
+paperBtn.addEventListener('click', () => playGame('✋'));
+scissorBtn.addEventListener('click', () => playGame('✌️'));
+</script> 
+</body>
+</html>
