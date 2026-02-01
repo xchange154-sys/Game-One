@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>✌️ Rock Paper Scissors</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+    body { margin: 0; padding: 0; background-color: #1a1a1a; }
     .mainBox {
       display: flex;
       width: 400px;
-      margin: 170px auto;
+      height: 330px;
+      box-sizing: border-box;
+      margin: 100px auto 100px auto;
       flex-direction: column;
       align-items: center;
       padding: 25px 0px 50px 0px;
@@ -22,16 +21,9 @@
       border-bottom: 10px solid darkorange;
       box-shadow: 0px 0px 10px black;
     }
-    .reactionBox {
-      display: flex;
-      gap: 60px;
-    }
-    #face {
-      transform: rotate(90deg);
-    }
-    .controls {
-      margin-top: 27px;
-    }
+    .reactionBox { display: flex; gap: 60px; }
+    #face { transform: rotate(90deg); }
+    .controls { margin-top: 27px; }
     .btn {
       font-size: 30px;
       margin: 0px 15px;
@@ -40,14 +32,27 @@
       transition: all 0.5s ease;
       border-radius: 5px;
       background: #222;
-    }
-    .btn:hover {
-      background-color: dimgray;
-      transform: translateY(-10px);
       cursor: pointer;
     }
-    #mainText {
-      font-weight: bolder;
+    .btn:hover { background-color: dimgray; transform: translateY(-10px); }
+    #mainText { font-weight: bolder; margin: 15px 0; }
+
+    /* YOUR REQUESTED BUTTON */
+    #restartBtn {
+      margin-top: 25px;
+      margin-bottom: 0px;
+      padding: 10px 25px;
+      background-color: darkorange;
+      color: #333;
+      border: 2px solid darkorange;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      visibility: hidden; /* Hidden until game ends */
+    }
+    #restartBtn:hover {
+      background-color: #333;
+      color: darkorange;
     }
   </style>
 </head>
@@ -65,21 +70,23 @@
     <button id="scissorHand" class="btn">✌️</button>
     <button id="rockHand" class="btn">👊</button>
   </div>
+  <button id="restartBtn">RESTART >:}</button>
 </div>
+
 <script>
  const face = document.getElementById("face");
  const hisHand = document.getElementById("hisHand");
  const mainText = document.getElementById("mainText");
+ const restartBtn = document.getElementById("restartBtn");
  const paperBtn = document.getElementById("paperHand");
  const scissorBtn = document.getElementById("scissorHand");
  const rockBtn = document.getElementById("rockHand");
+ 
  const choices = ['👊', '✋', '✌️'];
  let gamePlayed = false;
 
  function getHisChoice() {
-  const randomIndex = Math.floor(Math.random() * 3);
-  console.log(choices[randomIndex]);
-  return choices[randomIndex];
+  return choices[Math.floor(Math.random() * 3)];
  }
 
  function determineWinner(player, him) {
@@ -93,48 +100,46 @@
 
 function updateUI(result, playerChoice, hisChoice) {
   hisHand.textContent = hisChoice;
-  paperBtn.style.backgroundColor = '#222';
-  scissorBtn.style.backgroundColor = '#222';
-  rockBtn.style.backgroundColor = '#222';
-
-  if (playerChoice === '✋') {
-    paperBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
-  }
-  if (playerChoice === '✌️') {
-    scissorBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
-  }
-  if (playerChoice === '👊') {
-    rockBtn.style.backgroundColor = result === 'player' ? 'green' : 'red';
-  }
+  
+  if (playerChoice === '✋') paperBtn.style.backgroundColor = result === 'player' ? 'green' : (result === 'draw' ? 'gray' : 'red');
+  if (playerChoice === '✌️') scissorBtn.style.backgroundColor = result === 'player' ? 'green' : (result === 'draw' ? 'gray' : 'red');
+  if (playerChoice === '👊') rockBtn.style.backgroundColor = result === 'player' ? 'green' : (result === 'draw' ? 'gray' : 'red');
 
   if (result === 'player') {
     face.textContent = ":o";
     mainText.textContent = "OH! You Won!";
   } else if (result === 'him') {
     face.textContent = ">:]";
-    mainText.textContent = "Loser! Refresh and Try again if you dare!";
+    mainText.textContent = "Loser! Try again if you dare!";
   } else {
     face.textContent = ":|";
-    mainText.textContent = "Bleh. It's a Draw. Try Again?";
+    mainText.textContent = "Bleh. It's a Draw.";
   }
+  
+  restartBtn.style.visibility = "visible"; // Show button when game ends
 }
 
 function playGame(playerChoice) {
     if (gamePlayed) return;
     gamePlayed = true;
-    const buttons = [paperBtn, scissorBtn, rockBtn];
-    buttons.forEach(btn => {
-      btn.style.cursor = 'default';
-      btn.onmouseenter = null;
-      btn.onmouseleave = null;
-    });
-
+    
     const hisChoice = getHisChoice();
     const result = determineWinner(playerChoice, hisChoice);
+    
     setTimeout(() => {
       updateUI(result, playerChoice, hisChoice);
     }, 300);
-  }
+}
+
+// RESET FUNCTION
+restartBtn.addEventListener('click', () => {
+    gamePlayed = false;
+    face.textContent = ":]";
+    hisHand.textContent = "✌️";
+    mainText.textContent = "Let's Play Rock Paper Scissor's!";
+    restartBtn.style.visibility = "hidden";
+    [paperBtn, scissorBtn, rockBtn].forEach(btn => btn.style.backgroundColor = '#222');
+});
 
 rockBtn.addEventListener('click', () => playGame('👊'));
 paperBtn.addEventListener('click', () => playGame('✋'));
